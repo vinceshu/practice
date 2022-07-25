@@ -1,4 +1,4 @@
-package cn.vince.practice.LeeCode;
+package cn.vince.practice.LeeCode.hot100;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;

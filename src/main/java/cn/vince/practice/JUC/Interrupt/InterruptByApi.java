@@ -15,8 +15,21 @@ public class InterruptByApi {
 
     private static final CustomizeExecutor customizeExecutor = new CustomizeExecutor();
 
-    public static void main(String[] args) {
-        apiInterrupt();
+    public  static void main(String[] args) {
+        Object object = new Object();
+
+        try {
+            synchronized (object) {
+                object.wait();
+
+                object.notify();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        //apiInterrupt();
     }
 
     public static void apiInterrupt() {

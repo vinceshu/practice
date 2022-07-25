@@ -1,12 +1,12 @@
 package cn.vince.practice.JUC.threadPool;
 
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.context.annotation.Bean;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import javax.annotation.Resource;
+import java.util.concurrent.*;
 
 /**
  * @author: vince.shu

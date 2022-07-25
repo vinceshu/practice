@@ -1,3 +1,4 @@
+/*
 package cn.vince.practice.JUC.threadPool;
 
 
@@ -10,6 +11,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.utils.DateUtils;
+import org.redisson.Redisson;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -27,13 +31,16 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 
+*/
 /**
  * @author vinceshu
  * @date 2022/6/4 22:31
  * @description 线程池监控
- */
+ *//*
+
 @Slf4j
 @Component
 public class ThreadMonitorHandler extends IJobHandler {
@@ -46,10 +53,15 @@ public class ThreadMonitorHandler extends IJobHandler {
 
     private Map<Object, String> beanCache = new HashMap<>();
 
+    @Autowired
+    private RedissonClient redissonClient;
 
-    /**
+
+    */
+/**
      * 线程池监控上报
-     */
+     *//*
+
     @Data
     @Builder
     @NoArgsConstructor
@@ -58,91 +70,129 @@ public class ThreadMonitorHandler extends IJobHandler {
         //---------------------------------------------------------------------
         // 核心参数
         //---------------------------------------------------------------------
-        /**
+        */
+/**
          * 核心线程数
-         */
+         *//*
+
         private Integer coreSize;
-        /**
+        */
+/**
          * 最大线程数
-         */
+         *//*
+
         private Integer maximumSize;
-        /**
+        */
+/**
          * 线程池当前线程数 (有锁)
-         */
+         *//*
+
         private Integer poolSize;
-        /**
+        */
+/**
          * 活跃线程数 (有锁)
-         */
+         *//*
+
         private Integer activeSize;
-        /**
+        */
+/**
          * 同时进入池中的最大线程数 (有锁)
-         */
+         *//*
+
         private Integer largestPoolSize;
-        /**
+        */
+/**
          * 线程池中执行任务总数量 (有锁)
-         */
+         *//*
+
         private Long completedTaskCount;
 
-        /**
+        */
+/**
          * 队列元素个数
-         */
+         *//*
+
         private Integer queueSize;
-        /**
+        */
+/**
          * 队列类型
-         */
+         *//*
+
         private String queueType;
-        /**
+        */
+/**
          * 队列剩余容量
-         */
+         *//*
+
         private Integer queueRemainingCapacity;
-        /**
+        */
+/**
          * 队列容量
-         */
+         *//*
+
         private Integer queueCapacity;
 
 
         //---------------------------------------------------------------------
         // 扩展参数
         //---------------------------------------------------------------------
-        /**
+        */
+/**
          * 线程类型 使用全路径类名
-         */
+         *//*
+
         private String executorType;
-        /**
+        */
+/**
          * 线程在容器中的名称
-         */
+         *//*
+
         private String beanName;
 
-        /**
+        */
+/**
          * 当前负载
-         */
+         *//*
+
         private String currentLoad;
-        /**
+        */
+/**
          * 峰值负载
-         */
+         *//*
+
         private String peakLoad;
 
 
-        /**
+        */
+/**
          * 机器IP
-         */
+         *//*
+
         private String host;
-        /**
+        */
+/**
          * 内存占比
-         */
+         *//*
+
         private String memoryProportion;
-        /**
+        */
+/**
          * JVM空闲内存
-         */
+         *//*
+
         private String freeMemory;
 
-        /**
+        */
+/**
          * 当前时间戳 s
-         */
+         *//*
+
         private Integer timestamp;
-        /**
+        */
+/**
          * 客户端上报时间
-         */
+         *//*
+
         private String clientLastRefreshTime;
 
 
@@ -177,6 +227,10 @@ public class ThreadMonitorHandler extends IJobHandler {
 
     @Override
     public ReturnT<String> execute(String s) throws Exception {
+        RLock lock = redissonClient.getLock("test");
+
+        lock.tryLock(5L, 1L, TimeUnit.SECONDS);
+
         if (CollectionUtils.isEmpty(executorList)) {
             XxlJobLogger.log(">>>>>> 未获取到线程池");
             return ReturnT.SUCCESS;
@@ -207,9 +261,11 @@ public class ThreadMonitorHandler extends IJobHandler {
         return ReturnT.SUCCESS;
     }
 
-    /**
+    */
+/**
      * jdk提供的
-     */
+     *//*
+
     private ExecutorReport buildThreadPoolExecutorReport(ThreadPoolExecutor threadPoolExecutor, String executorType, String beanName) {
         BlockingQueue<Runnable> queue = threadPoolExecutor.getQueue();
 
@@ -267,13 +323,15 @@ public class ThreadMonitorHandler extends IJobHandler {
         return supplement(report);
     }
 
-    /**
+    */
+/**
      * 获取私有成员变量的值
      *
      * @param instance  实例
      * @param filedName 字段名称
      * @return 字段
-     */
+     *//*
+
     private Object getPrivateField(Object instance, String filedName) throws NoSuchFieldException, IllegalAccessException {
         Field field = instance.getClass().getDeclaredField(filedName);
         field.setAccessible(true);
@@ -284,9 +342,11 @@ public class ThreadMonitorHandler extends IJobHandler {
         return ((int) (Double.parseDouble(num1 + "") / Double.parseDouble(num2 + "") * 100));
     }
 
-    /**
+    */
+/**
      * 字节转换
-     */
+     *//*
+
     private String getPrintSize(long size) {
         long covertNum = 1024;
         if (size < covertNum) {
@@ -327,12 +387,14 @@ public class ThreadMonitorHandler extends IJobHandler {
         return poolRunStateInfo;
     }
 
-    /**
+    */
+/**
      * 根据实例获取该实例在容器中的名称
      *
      * @param instance 实例
      * @return 实例在容器中的名称
-     */
+     *//*
+
     private String getExecutorBeanNameForInstance(Object instance) {
         if (instance == null) {
             return null;
@@ -354,3 +416,4 @@ public class ThreadMonitorHandler extends IJobHandler {
     }
 
 }
+*/
